@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +24,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -55,7 +60,7 @@ fun MessageCard(msg: Message){
           painter = painterResource(R.drawable.ic_launcher_background),
             contentDescription = "Contact profile picture",
             modifier = Modifier
-            //set Image size to 40dp
+                //set Image size to 40dp
                 .size(40.dp)
                 //Clip image to be shaped as a circle
                 .clip(CircleShape)
@@ -65,7 +70,11 @@ fun MessageCard(msg: Message){
         //Add a horizontal space between the image and the column
         Spacer(modifier = Modifier.width(8.dp))
 
-        Column {
+        //We keep track if the message is expanded or not in this
+        //variable
+        var isExpanded by remember { mutableStateOf(false) }
+
+        Column(modifier = Modifier.clickable { isExpanded = !isExpanded}) {
             Text(
                 text = msg.author,
                 color = MaterialTheme.colorScheme.secondary,
@@ -78,6 +87,9 @@ fun MessageCard(msg: Message){
                 Text(
                     text = msg.body,
                     modifier = Modifier.padding(all = 4.dp),
+                    //if the message is expanded, we display all its content
+                    //otherwise we only display the first line
+                    maxLines = if(isExpanded) Int.MAX_VALUE else 1,
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
