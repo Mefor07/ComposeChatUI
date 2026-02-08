@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -74,6 +76,11 @@ fun MessageCard(msg: Message){
         //variable
         var isExpanded by remember { mutableStateOf(false) }
 
+        //sufaceColor will be updated gradually fron one color to the other
+        val surfaceColor by animateColorAsState(
+            if(isExpanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+        )
+
         Column(modifier = Modifier.clickable { isExpanded = !isExpanded}) {
             Text(
                 text = msg.author,
@@ -83,7 +90,14 @@ fun MessageCard(msg: Message){
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            Surface(shape = MaterialTheme.shapes.medium, shadowElevation = 1.dp){
+            Surface(
+                shape = MaterialTheme.shapes.medium,
+                shadowElevation = 1.dp,
+                //surfaceColor color will be changing gradually from primary to surface
+                color = surfaceColor,
+                //animateContentSize will change the surface size gradually
+                modifier =  Modifier.animateContentSize().padding(1.dp)
+                ){
                 Text(
                     text = msg.body,
                     modifier = Modifier.padding(all = 4.dp),
